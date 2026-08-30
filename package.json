@@ -1,0 +1,28 @@
+{
+  "name": "storm-addresses",
+  "version": "1.0.0",
+  "description": "STORM ADDRESSES - High-Speed GAR 10-level address standardization engine according to Minstroy rules / Decree No. 1221",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/test_standardizer.js",
+    "import-gar": "node scripts/import_gar.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "multer": "^2.2.0",
+    "xlsx": "^0.18.5"
+  },
+  "keywords": [
+    "dadata",
+    "fias",
+    "gar",
+    "address-standardization",
+    "autocomplete",
+    "egrul",
+    "bik"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT"
+}

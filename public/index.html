@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STORM ADDRESSES — Высокоскоростная платформа стандартизации адресов по ГАР</title>
+  <link rel="icon" type="image/jpeg" href="icon.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient Background Mesh Glow -->
+  <div class="ambient-mesh">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+  </div>
+
+  <!-- Fixed Top Header Wrapper -->
+  <div class="fixed-top-header">
+    <header class="navbar">
+      <div class="nav-container">
+        <div class="logo">
+          <div class="logo-icon-wrapper">
+            <img src="icon.jpg" alt="STORM ADDRESSES" class="logo-img">
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">STORM<span class="highlight">ADDRESSES</span> <span class="enterprise-badge">Enterprise</span></span>
+            <span class="logo-subtitle">Высокоскоростная платформа стандартизации и автодополнения адресов по Постановлению № 1221</span>
+          </div>
+        </div>
+        <div class="nav-metrics">
+          <div class="metric-pill">
+            <span class="status-indicator"></span>
+            <span class="metric-label">ГАР Минстрой v2026.1</span>
+          </div>
+          <div class="metric-pill">
+            <span class="metric-icon">⚡</span>
+            <span class="metric-label">Отклик &lt; 5мс</span>
+          </div>
+          <div class="metric-pill">
+            <span class="metric-icon">🛡️</span>
+            <span class="metric-label">10 полей ГАР</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs Bar -->
+    <nav class="tabs-bar">
+      <div class="nav-container">
+        <button class="tab-btn active" data-tab="suggest-tab">
+          <span class="tab-icon">✨</span>
+          <span class="tab-text">Подсказки</span>
+        </button>
+        <button class="tab-btn" data-tab="clean-tab">
+          <span class="tab-icon">⚡</span>
+          <span class="tab-text">Выправка БД</span>
+        </button>
+        <button class="tab-btn" data-tab="party-tab">
+          <span class="tab-icon">🏢</span>
+          <span class="tab-text">Компании (ЕГРЮЛ)</span>
+        </button>
+        <button class="tab-btn" data-tab="bank-tab">
+          <span class="tab-icon">🏦</span>
+          <span class="tab-text">Банки (БИК)</span>
+        </button>
+        <button class="tab-btn" data-tab="api-tab">
+          <span class="tab-icon">🔌</span>
+          <span class="tab-text">REST API</span>
+        </button>
+        <button class="tab-btn" data-tab="gar-tab">
+          <span class="tab-icon">📚</span>
+          <span class="tab-text">Правила ГАР</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Container -->
+  <main class="main-content nav-container">
+
+    <!-- TAB 1: Suggest Autocomplete -->
+    <section id="suggest-tab" class="tab-content active">
+      <div class="card glass-card hero-card">
+        <div class="card-header">
+          <div class="header-badge">STORM ADDRESSES Autocomplete Engine</div>
+          <h2>Мгновенный ввод и раскладка по 10 элементам ГАР</h2>
+          <p>Начните вводить любой адрес. Система выполнит поиск с раскладкой по 10 обязательным элементам ГАР в порядке от общего к частному.</p>
+        </div>
+
+        <div class="search-section">
+          <div class="input-group search-box">
+            <div class="search-icon">🔍</div>
+            <input type="text" id="address-input" placeholder="Начните вводить адрес (например: Химки, Сходня, 2-й Дачный пер., 10)..." autocomplete="off">
+            <span class="kbd-hint">Ctrl + K</span>
+            <button class="btn-clear hidden" id="btn-clear-suggest" title="Очистить ввод">✕</button>
+            <button class="btn btn-primary btn-glow" id="btn-suggest-search">
+              <span>Искать</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <div id="suggest-dropdown" class="suggest-dropdown hidden"></div>
+          </div>
+
+          <!-- Keyboard Shortcuts Info Bar -->
+          <div class="kbd-bar">
+            <span class="kbd-item"><kbd>↑</kbd> <kbd>↓</kbd> Навигация</span>
+            <span class="kbd-item"><kbd>Enter</kbd> Выбрать</span>
+            <span class="kbd-item"><kbd>Esc</kbd> Закрыть</span>
+          </div>
+
+          <!-- Recent Searches Chips -->
+          <div id="recent-chips-block" class="quick-chips hidden">
+            <span class="chips-label">⏱️ Недавние:</span>
+            <div id="recent-chips-list" class="chips-list"></div>
+          </div>
+
+          <!-- Preset Example Chips -->
+          <div class="quick-chips">
+            <span class="chips-label">💡 Примеры:</span>
+            <button class="chip-btn" data-query="Химки, мкр Сходня, 2-й Дачный пер., д. 10">г. Химки, мкр. Сходня, 2-й Дачный пер., 10</button>
+            <button class="chip-btn" data-query="Московская область, г.о. Дубна, г. Дубна, ул. Тверская, д. 2А">г. Дубна, ул. Тверская, 2А</button>
+            <button class="chip-btn" data-query="125009 г москва тверская 12 стр 1 кв 45">г. Москва, ул. Тверская, 12</button>
+            <button class="chip-btn" data-query="Краснодарский край, г Сочи, п Лазаревское, ул Победы, д 14">г. Сочи, п. Лазаревское</button>
+            <button class="chip-btn" data-query="420000 Республика Татарстан, г Казань, ул Баумана д 9 кв 12">г. Казань, ул. Баумана, 9</button>
+          </div>
+        </div>
+
+        <div id="suggest-result-panel" class="result-panel hidden">
+          <div class="result-header">
+            <div class="result-title-group">
+              <span class="sparkle-icon">✨</span>
+              <h3>Форматированный адрес по Постановлению № 1221</h3>
+            </div>
+            <button class="btn btn-sm btn-outline btn-copy" id="btn-copy-suggest">
+              <span class="copy-icon">📋</span> Копировать адрес
+            </button>
+          </div>
+          
+          <div class="formatted-box">
+            <span class="label">Полная строка (10 полей по порядку):</span>
+            <div id="formatted-address-text" class="formatted-text"></div>
+          </div>
+
+          <!-- Extended Metadata & Geo Card -->
+          <div class="geo-metadata-grid">
+            <div class="geo-meta-item">
+              <span class="meta-icon">📌</span>
+              <div class="meta-content">
+                <span class="meta-label">Координаты (Геолокация):</span>
+                <span class="meta-val" id="meta-coords">55.7558° N, 37.6173° E</span>
+              </div>
+            </div>
+            <div class="geo-meta-item">
+              <span class="meta-icon">🆔</span>
+              <div class="meta-content">
+                <span class="meta-label">Идентификатор ГАР / ФИАС:</span>
+                <span class="meta-val" id="meta-fias">fias-8924a-gar-2026</span>
+              </div>
+            </div>
+            <div class="geo-meta-item">
+              <span class="meta-icon">🏛️</span>
+              <div class="meta-content">
+                <span class="meta-label">Код ОКАТО / ОКТМО:</span>
+                <span class="meta-val" id="meta-oktmo">45380000 / 45380000000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gar-matrix-container">
+            <div class="matrix-header">
+              <span class="matrix-title">Разбор по 10 элементам структуры ГАР (Минстрой РФ):</span>
+              <span class="confidence-pill" id="suggest-confidence">Точность: 100%</span>
+            </div>
+            <div class="matrix-grid" id="matrix-grid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Clean Standardizer (Выправка) -->
+    <section id="clean-tab" class="tab-content">
+      <div class="card glass-card">
+        <div class="card-header">
+          <div class="header-badge">STORM Enterprise Batch Engine</div>
+          <h2>Выправка и массовая стандартизация адресных баз</h2>
+          <p>Загрузите файл баз данных любого формата для автоматического исправления адресов. Получите обработанный файл с исходными и выправленными адресами для загрузки обратно в вашу БД.</p>
+        </div>
+
+        <!-- Format Badges & File Upload Area -->
+        <div class="format-badges-container">
+          <span class="badges-title">Поддерживаемые форматы баз данных:</span>
+          <div class="badges-list">
+            <span class="badge badge-excel">📊 Excel (.xlsx)</span>
+            <span class="badge badge-excel-old">📈 Excel (.xls)</span>
+            <span class="badge badge-csv">📄 CSV (.csv)</span>
+            <span class="badge badge-txt">📝 Текст (.txt)</span>
+            <span class="badge badge-json">🌐 JSON (.json)</span>
+          </div>
+        </div>
+
+        <div class="drag-drop-zone" id="drag-drop-zone">
+          <div class="drag-drop-content">
+            <div class="upload-icon">📂</div>
+            <div class="upload-text">
+              <strong>Перетащите файл базы данных сюда</strong> или нажмите для выбора на компьютере
+            </div>
+            <div class="upload-hint">Максимальный размер файла: 50 МБ. Поддерживаются .xlsx, .xls, .csv, .txt, .json</div>
+            <input type="file" id="batch-file-input" accept=".xlsx,.xls,.csv,.txt,.json" style="display: none;">
+          </div>
+        </div>
+
+        <div class="form-group margin-top-md">
+          <div class="batch-controls">
+            <label for="clean-input" class="form-label">Или введите/вставьте адреса вручную (по 1 строке):</label>
+            <div class="batch-ctrl-btns">
+              <button class="btn btn-sm btn-outline" id="btn-load-demo-batch">💡 Демо-адреса</button>
+              <button class="btn btn-sm btn-text" id="btn-clear-batch">🗑️ Очистить поле</button>
+            </div>
+          </div>
+          <textarea id="clean-input" rows="5" placeholder="125009 г москва тверская 12 стр 1 кв 45&#10;Московская область, г.о. Дубна, г. Дубна, ул. Тверская, д. 2А&#10;Химки мкр Сходня 2-й Дачный пер 10&#10;Республика Башкортостан с Иглино ул Тверская 12"></textarea>
+        </div>
+
+        <div class="btn-actions-row">
+          <button class="btn btn-primary btn-glow" id="btn-clean-action">
+            <span>⚡ Запустить выправку адресов</span>
+          </button>
+          <div class="export-btn-group hidden" id="export-btn-group">
+            <button class="btn btn-success" id="btn-export-excel">
+              <span>📊 Скачать Excel (.xlsx)</span>
+            </button>
+            <button class="btn btn-outline" id="btn-export-csv">
+              <span>📄 Скачать CSV (.csv)</span>
+            </button>
+            <button class="btn btn-outline" id="btn-export-json">
+              <span>🌐 Скачать JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="batch-progress-container" class="progress-container hidden">
+          <div class="progress-info">
+            <span id="progress-status-text">Выполняется стандартизация адресов по реестру ГАР...</span>
+            <span id="progress-percentage">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Analytics Metrics Widget -->
+        <div id="batch-metrics-widget" class="analytics-widget-row hidden">
+          <div class="stat-card">
+            <span class="stat-label">Всего обработано:</span>
+            <span class="stat-value" id="stat-total-count">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Точность связывания ГАР:</span>
+            <span class="stat-value highlight-green" id="stat-accuracy">100%</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Средняя скорость:</span>
+            <span class="stat-value highlight-blue" id="stat-latency">0.3 мс/строку</span>
+          </div>
+        </div>
+
+        <div id="clean-result-panel" class="result-panel hidden">
+          <div class="result-header">
+            <h3>Сравнение адресов: Исходные vs Выправленные ГАР</h3>
+            <div class="table-search-box">
+              <input type="text" id="table-filter-input" placeholder="🔍 Быстрый поиск в таблице..." class="table-filter-field">
+            </div>
+            <span id="clean-confidence-badge" class="badge">Обработано записей: 0</span>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th style="background: rgba(255,255,255,0.05); color: #94a3b8;">Исходный адрес (Из вашей базы)</th>
+                  <th style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">Выправленный адрес ГАР (Для загрузки обратно)</th>
+                  <th>Индекс</th>
+                  <th>Субъект РФ</th>
+                  <th>Мун. район/округ</th>
+                  <th>Населенный пункт</th>
+                  <th>Улица</th>
+                  <th>Дом</th>
+                  <th>Помещение</th>
+                  <th>Точность</th>
+                </tr>
+              </thead>
+              <tbody id="clean-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Companies (EGRUL) -->
+    <section id="party-tab" class="tab-content">
+      <div class="card glass-card">
+        <div class="card-header">
+          <div class="header-badge">ЕГРЮЛ / ЕГРИП ФНС РФ</div>
+          <h2>Поиск организаций и индивидуальных предпринимателей</h2>
+          <p>Мгновенный поиск по ИНН, ОГРН или наименованию юридического лица.</p>
+        </div>
+
+        <div class="search-section">
+          <div class="input-group search-box">
+            <div class="search-icon">🏢</div>
+            <input type="text" id="party-input" placeholder="Введите ИНН (например, 7707083893) или название компании 'Сбербанк', 'Яндекс'...">
+            <button class="btn btn-primary" id="btn-party-search">Найти</button>
+          </div>
+
+          <!-- Quick Company Preset Chips -->
+          <div class="quick-chips">
+            <span class="chips-label">💡 Популярные:</span>
+            <button class="chip-company-btn" data-query="7707083893">ПАО Сбербанк</button>
+            <button class="chip-company-btn" data-query="7736207543">ООО Яндекс</button>
+            <button class="chip-company-btn" data-query="7710104031">АО Т-Банк</button>
+            <button class="chip-company-btn" data-query="7710140679">АО Альфа-Банк</button>
+            <button class="chip-company-btn" data-query="7743001840">ООО Озон</button>
+            <button class="chip-company-btn" data-query="7721546870">ООО Вайлдберриз</button>
+          </div>
+        </div>
+
+        <div id="party-results" class="cards-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Banks (BIK) -->
+    <section id="bank-tab" class="tab-content">
+      <div class="card glass-card">
+        <div class="card-header">
+          <div class="header-badge">Справочник БИК ЦБ РФ</div>
+          <h2>Поиск банковских институтов</h2>
+          <p>Поиск банков по БИК, SWIFT коду или наименованию кредитной организации.</p>
+        </div>
+
+        <div class="search-section">
+          <div class="input-group search-box">
+            <div class="search-icon">🏦</div>
+            <input type="text" id="bank-input" placeholder="Введите БИК (например, 044525225) или название 'Сбербанк', 'Т-Банк'...">
+            <button class="btn btn-primary" id="btn-bank-search">Найти</button>
+          </div>
+
+          <!-- Quick Bank Preset Chips -->
+          <div class="quick-chips">
+            <span class="chips-label">💡 Популярные:</span>
+            <button class="chip-bank-btn" data-query="044525225">Сбербанк (044525225)</button>
+            <button class="chip-bank-btn" data-query="044525974">Т-Банк (044525974)</button>
+            <button class="chip-bank-btn" data-query="044525593">Альфа-Банк (044525593)</button>
+            <button class="chip-bank-btn" data-query="044525823">ВТБ (044525823)</button>
+          </div>
+        </div>
+
+        <div id="bank-results" class="cards-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: REST API Sandbox & Snippets -->
+    <section id="api-tab" class="tab-content">
+      <div class="card glass-card">
+        <div class="card-header">
+          <div class="header-badge">Developer REST API Suite</div>
+          <h2>Интерактивная песочница и генератор кода API</h2>
+          <p>Эндпоинты полностью совместимы со спецификациями DaData REST API.</p>
+        </div>
+
+        <div class="api-endpoint-card">
+          <span class="http-method post">POST</span>
+          <code class="endpoint-url">/api/v1/clean/address</code>
+          <span class="endpoint-desc">Стандартизация и разбор по 10 элементам ГАР</span>
+        </div>
+
+        <!-- Code Snippet Generator Tabs -->
+        <div class="snippet-lang-bar">
+          <span class="snippet-lang-title">Пример кода запроса:</span>
+          <button class="lang-tab-btn active" data-lang="curl">cURL</button>
+          <button class="lang-tab-btn" data-lang="nodejs">Node.js (fetch)</button>
+          <button class="lang-tab-btn" data-lang="python">Python (requests)</button>
+          <button class="lang-tab-btn" data-lang="php">PHP (curl)</button>
+        </div>
+
+        <div class="code-box-wrapper margin-bottom-md">
+          <pre><code id="snippet-code-display">// cURL example
+curl -X POST http://localhost:3001/api/v1/clean/address \
+  -H "Content-Type: application/json" \
+  -d '{"query": "125009 г москва тверская 12"}'</code></pre>
+        </div>
+
+        <div class="code-editor-layout">
+          <div class="editor-col">
+            <div class="editor-header">
+              <span class="editor-title">Request Body (JSON)</span>
+            </div>
+            <textarea id="api-req-body" rows="6">{ "query": "125009 г москва тверская 12 стр 1 кв 45" }</textarea>
+            <button class="btn btn-primary" id="btn-send-api">🚀 Отправить запрос в API</button>
+          </div>
+          <div class="editor-col">
+            <div class="editor-header">
+              <span class="editor-title">Response Output (JSON)</span>
+              <span class="meta-val" id="api-res-status">200 OK • 1.2 ms</span>
+            </div>
+            <pre><code id="api-res-body">// Нажмите 'Отправить запрос в API'</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: GAR Rules Schema (10 Fields) -->
+    <section id="gar-tab" class="tab-content">
+      <div class="card glass-card">
+        <div class="card-header">
+          <div class="header-badge">Спецификация Минстроя РФ</div>
+          <h2>Правила формирования адреса (Постановление Правительства РФ № 1221)</h2>
+          <p>Полный адрес формируется из 10 строго упорядоченных элементов — от общего к частному:</p>
+        </div>
+
+        <!-- Clarification Banner for Cities of Federal Significance -->
+        <div class="rule-banner">
+          <div class="rule-banner-icon">💡</div>
+          <div class="rule-banner-body">
+            <strong>Официальное правило дедубликации (Города федерального значения):</strong>
+            <p>Если <em>Субъект РФ</em> совпадает с <em>Населённым пунктом</em> (например, <code>г. Москва</code> или <code>г. Санкт-Петербург</code>), то <strong>Субъект РФ не дублируется и в адресе не отображается</strong>. Вместо <code>г. Москва, ... г. Москва</code> выводится только <strong>один раз <code>г. Москва</code></strong>.</p>
+          </div>
+        </div>
+
+        <div class="gar-rules-grid">
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f1">1</span>
+              <span class="rule-code">postal_code</span>
+            </div>
+            <h4>1. Почтовый индекс</h4>
+            <p>6-значный почтовый индекс объекта адресации (например, <code>125009</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f2">2</span>
+              <span class="rule-code">country</span>
+            </div>
+            <h4>2. Наименование страны</h4>
+            <p>Наименование государства (по умолчанию: <code>Российская Федерация</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f3">3</span>
+              <span class="rule-code">region</span>
+            </div>
+            <h4>3. Субъект РФ</h4>
+            <p>Республика, край, область, г. физ. значения (например, <code>г. Москва</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f4">4</span>
+              <span class="rule-code">municipal_district</span>
+            </div>
+            <h4>4. Муниципальный район / округ</h4>
+            <p>Муниципальное образование 1-го уровня (например, <code>вн.тер.г. м.о. Тверской</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f5">5</span>
+              <span class="rule-code">settlement_level</span>
+            </div>
+            <h4>5. Городское / сельское поселение</h4>
+            <p>Поселение в составе мун. района (например, <code>городское поселение Мытищи</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f6">6</span>
+              <span class="rule-code">locality</span>
+            </div>
+            <h4>6. Населённый пункт</h4>
+            <p>Город, посёлок, деревня, село, станица (например, <code>г. Москва</code>, <code>п. Лазаревское</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f7">7</span>
+              <span class="rule-code">planning_structure</span>
+            </div>
+            <h4>7. Элемент планировочной структуры</h4>
+            <p>Микрорайон, квартал, СНТ, промзона (например, <code>мкр. Центральный</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f8">8</span>
+              <span class="rule-code">street</span>
+            </div>
+            <h4>8. Улично-дорожная сеть</h4>
+            <p>Улица, проспект, переулок, шоссе, бульвар (например, <code>ул. Тверская</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f9">9</span>
+              <span class="rule-code">house_building</span>
+            </div>
+            <h4>9. Объект адресации (номер)</h4>
+            <p>Дом, владение, корпус, строение, участок (например, <code>д. 12, стр. 1</code>).</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-header">
+              <span class="rule-badge f10">10</span>
+              <span class="rule-code">room_flat</span>
+            </div>
+            <h4>10. Помещение</h4>
+            <p>Квартира, офис, помещение, комната, машино-место (например, <code>кв. 45</code>).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="nav-container footer-content">
+      <div class="footer-left">
+        <span class="footer-title">STORM ADDRESSES Enterprise &copy; 2026</span>
+        <span class="footer-desc">Спецификация Минстроя РФ & Постановление Правительства № 1221</span>
+      </div>
+      <div class="footer-right">
+        <span class="status-indicator"></span>
+        <span class="footer-status">Self-Hosted Engine Online</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global Toast Notification Banner -->
+  <div id="toast-notification" class="toast-notification hidden">
+    <span class="toast-icon">✨</span>
+    <span id="toast-message">Скопировано в буфер обмена!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

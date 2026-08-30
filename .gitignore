@@ -41,3 +41,12 @@ Desktop.ini
 *.log
 *.tmp
 node_modules/
+
+# Additional ignores
+node_modules/
+dist/
+gar_data/
+
+data/*.sqlite*
+data/
+
